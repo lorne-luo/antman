@@ -1,26 +1,23 @@
 # -*- coding:utf-8 -*-
 import logging
-import redis
 import smtplib
 import email
-from django.conf import settings
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.header import Header
+from ... import configs
 
 log = logging.getLogger(__name__)
-r = redis.StrictRedis(host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=settings.CUSTOM_DB_CHANNEL, decode_responses=True)
 ALIYUN_EMAIL_DAILY_COUNTER = 'ALIYUN_EMAIL_DAILY_COUNTER'
 
-ALIYUN_EMAIL_HOST = settings.ALIYUN_EMAIL_HOST  # smtp server address
-ADMIN_EMAIL = settings.ADMIN_EMAIL  # 管理员地址
-SITE_NAME = settings.SITE_NAME  # 自定义的发件人名称
+ADMIN_EMAIL = configs.ADMIN_EMAIL  # 管理员地址
+SITE_NAME = 'LUOTAO'  # 自定义的发件人名称
 # 单一发信地址
-SINGLE_EMAIL_USERNAME = settings.ALIYUN_SINGLE_EMAIL_USERNAME  # 发件人地址，通过控制台创建的发件人地址
-SINGLE_EMAIL_PASSWORD = settings.ALIYUN_SINGLE_EMAIL_PASSWORD  # 发件人密码，通过控制台创建的发件人密码
+SINGLE_EMAIL_USERNAME = configs.ALIYUN_SINGLE_EMAIL_USERNAME  # 发件人地址，通过控制台创建的发件人地址
+SINGLE_EMAIL_PASSWORD = configs.ALIYUN_SINGLE_EMAIL_PASSWORD  # 发件人密码，通过控制台创建的发件人密码
 # 批量发信地址
-BATCH_EMAIL_USERNAME = settings.ALIYUN_BATCH_EMAIL_USERNAME
-BATCH_EMAIL_PASSWORD = settings.ALIYUN_BATCH_EMAIL_PASSWORD
+BATCH_EMAIL_USERNAME = configs.ALIYUN_BATCH_EMAIL_USERNAME
+BATCH_EMAIL_PASSWORD = configs.ALIYUN_BATCH_EMAIL_PASSWORD
 
 ALIYUN_EMAIL_DAILY_FREE_LIMIT = 200
 
@@ -50,9 +47,8 @@ def _send_email(receivers, subject, html_content, text_content=None):
     # 发送邮件
     try:
         # 必须使用SSL，端口465
-        client = smtplib.SMTP_SSL()
-        host = ALIYUN_EMAIL_HOST
-        client.connect(host, 465)
+        client = smtplib.SMTP_SSL(host=configs.ALIYUN_EMAIL_HOST)
+        client.connect(configs.ALIYUN_EMAIL_HOST, 465)
         # 开启DEBUG模式
         # client.set_debuglevel(0)
         client.login(username, password)
@@ -61,7 +57,7 @@ def _send_email(receivers, subject, html_content, text_content=None):
         #      使用SMTP.mail/SMTP.rcpt/SMTP.data方法
         client.sendmail(username, receivers, msg.as_string())
         client.quit()
-        print('邮件发送成功！')
+        print('Sent successfully.')
     except smtplib.SMTPConnectError as e:
         print(('邮件发送失败，连接失败:', e.smtp_code, e.smtp_error))
     except smtplib.SMTPAuthenticationError as e:
@@ -79,17 +75,5 @@ def _send_email(receivers, subject, html_content, text_content=None):
 
 
 def send_email(receivers, subject, html_content, text_content=None):
-    counter = r.get(ALIYUN_EMAIL_DAILY_COUNTER) or 0
-    counter = int(counter)
-    if counter < ALIYUN_EMAIL_DAILY_FREE_LIMIT - 1:
-        _send_email(receivers, subject, html_content, text_content)
-        counter += 1
-        r.set(ALIYUN_EMAIL_DAILY_COUNTER, counter)
-    else:
-        msg = 'Aliyun email exceed %s daily free limitation.' % ALIYUN_EMAIL_DAILY_FREE_LIMIT
-        log.warning('[EMAIL SENDER] %s' % msg)
+    _send_email(receivers, subject, html_content, text_content)
 
-    if counter == ALIYUN_EMAIL_DAILY_FREE_LIMIT - 1:  # 999
-        msg = 'Aliyun email exceed %s daily free limitation.' % ALIYUN_EMAIL_DAILY_FREE_LIMIT
-        _send_email([ADMIN_EMAIL], msg, msg)
-        r.set(ALIYUN_EMAIL_DAILY_COUNTER, counter + 1)

@@ -3,7 +3,7 @@ from .. import configs
 
 
 def send_email(from_addr, to_addr, subject, content, content_type='text/html'):
-    sg = sendgrid.SendGridAPIClient(apikey=configs.SENDGRID_API_KEY)
+    sg = sendgrid.SendGridAPIClient(api_key=configs.SENDGRID_API_KEY)
     data = {
         "personalizations": [
             {

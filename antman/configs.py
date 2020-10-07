@@ -7,11 +7,13 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 env = Env()
 env.read_env('.env')
 
+ADMIN_MOBILE_NUMBER = env('ADMIN_MOBILE_NUMBER', default='')
+ADMIN_EMAIL = env('ADMIN_EMAIL', default='')
+
 # TELSTRA SMS API KEY
 # ------------------------------------------------------------------------------
 TELSTRA_CLIENT_KEY = env('TELSTRA_CLIENT_KEY', default='')
 TELSTRA_CLIENT_SECRET = env('TELSTRA_CLIENT_SECRET', default='')
-ADMIN_MOBILE_NUMBER = env('ADMIN_MOBILE_NUMBER', default='')
 
 # SENDGRID EMAIL API
 # ------------------------------------------------------------------------------
@@ -31,3 +33,12 @@ VERIFICATION_CODE_TEMPLATE = 'SMS_116567674'
 # TELEGRAM
 # ------------------------------------------------------------------------------
 TELEGRAM_TOKEN = env('TELEGRAM_TOKEN', default='')
+
+# ALIYUN EMAIL
+# ------------------------------------------------------------------------------
+ALIYUN_EMAIL_HOST = env('ALIYUN_EMAIL_HOST', default='smtpdm-ap-southeast-2.aliyun.com')
+ALIYUN_SINGLE_EMAIL_USERNAME = env('ALIYUN_SINGLE_EMAIL_USERNAME', default='')  # 发件人地址，通过控制台创建的发件人地址
+ALIYUN_SINGLE_EMAIL_PASSWORD = env('ALIYUN_SINGLE_EMAIL_PASSWORD', default='')  # 发件人密码，通过控制台创建的发件人密码
+# 批量发信地址
+ALIYUN_BATCH_EMAIL_USERNAME = env('ALIYUN_BATCH_EMAIL_USERNAME', default='')
+ALIYUN_BATCH_EMAIL_PASSWORD = env('ALIYUN_BATCH_EMAIL_PASSWORD', default='')
