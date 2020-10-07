@@ -1,4 +1,4 @@
-antman
+ANTMAN
 ===============================
 
 version number: 0.0.1
@@ -9,25 +9,21 @@ Overview
 
 Notification library
 
-Installation / Usage
+Installation
 --------------------
 
 To install use pip:
 
-    $ pip install antman
+    $ pip install git+https://github.com/lorne-luo/antman.git
 
 
-Or clone the repo:
+Usage
+--------------------
 
-    $ git clone https://github.com/lorne-luo/antman.git
-    $ python setup.py install
-    
-Contributing
-------------
+    # send email
+    from antman.aliyun.email.smtp import *
+    send_email('test@test.com','test email','this is a test email')
 
-TBD
-
-Example
--------
-
-TBD
+    # send au sms
+    from antman.telstra import *
+    send_to_admin('test msg')
