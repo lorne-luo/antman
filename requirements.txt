@@ -2,6 +2,7 @@ environs>=8.0.0
 aliyun-python-sdk-core-v3==2.9.0
 git+https://github.com/Telstra/MessagingAPI-SDK-python.git#1.0.6.1
 sendgrid==6.4.7
+python-telegram-bot==12.8
 
 # Dev/Deployment
 sphinx
