@@ -10,3 +10,4 @@ sphinx_rtd_theme
 nose
 coverage
 pypi-publisher
+bump2version==1.0.0
